@@ -8,19 +8,19 @@ print "action space", env.action_space
 # print "obs space high", env.observation_space.high
 #> array([ 2.4       ,         inf,  0.20943951,         inf])
 # print "obs space high", env.observation_space.low
-for i in range(20):
-    env.render()
-    # action = env.action_space.sample()
-    # print action
-    # env.step(env.action_space.sample()) # take a random action
-    env.step(0)
-    print 0
+# for i in range(20):
+#     env.render()
+#     # action = env.action_space.sample()
+#     # print action
+#     # env.step(env.action_space.sample()) # take a random action
+#     env.step(0)
+#     print 0
 
-for i in range(10):
-	env.render()
-	env.step(1)
-	print 1
-for i in range(10):
+# for i in range(10):
+# 	env.render()
+# 	env.step(1)
+# 	print 1
+for i in range(100):
 	env.render()
 	env.step(2)
 	print 2

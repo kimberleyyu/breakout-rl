@@ -2,17 +2,15 @@
 import featureExtractor, util
 
 class QLearner:
-    def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0, discount = 0.95):
+    def __init__(self, legalActions, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0):
         self.epsilon = epsilon
         self.gamma = gamma
         self.alpha = alpha
         self.numTraining = numTraining
         self.weights = util.Counter()
-        self.discount = discount
+        self.legalActions = legalActions
 
-    # I'm not sure about this function in the context of the Open AI gym
-    def getLegalActions(self):
-        return env.action_space
+    # I'm not sure about this function in the context of the Open AI gyme
 
     def getWeights(self):
         return self.weights
@@ -30,26 +28,20 @@ class QLearner:
           Returns max_action Q(state,action) where the max is over
           legal actions.  If no legal actions, returns a value of 0.0.
         """
-        actions = self.getLegalActions(state)
-        if len(actions) == 0:
-            return 0.0
-        else:
-            vals = [self.getQValue(state, a) for a in actions]
-            return max(vals)
+        actions = self.legalActions
+        vals = [self.getQValue(state, a) for a in actions]
+        return max(vals)
 
     def computeActionFromQValues(self, state):
         """
           Computes the best action to take in a state.  If no legal actions,
           eg. at the terminal state, returns None.
         """
-        actions = self.getLegalActions(state)
-        if len(actions) == 0:
-            return None
-        else:
-            vals = [self.getQValue(state, a) for a in actions]
-            maxVal = max(vals)
-            bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
-            return random.choice(bestActions)
+        actions = self.legalActions        
+        vals = [self.getQValue(state, a) for a in actions]
+        maxVal = max(vals)
+        bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
+        return random.choice(bestActions)
 
     def getAction(self, state):
         """
@@ -59,10 +51,10 @@ class QLearner:
           no legal actions, eg. at the terminal state, returns None.
         """
         # Pick Action
-        legalActions = self.getLegalActions(state)
+        actions = self.legalActions
         action = None
         if util.flipCoin(self.epsilon):
-            return random.choice(legalActions)
+            return random.choice(actions)
         else:
             action = self.computeActionFromQValues(state)
         return action
@@ -78,10 +70,10 @@ class QLearner:
         features = featureExtractor(state,action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
         feature_keys = features.sortedKeys()
         # first we find the max Q-value over possible actions
-        legalActions = self.getLegalActions(nextState)
-        if legalActions:
+        actions = self.legalActions
+        if actions: 
             max_value = -float("inf")
-            for action2 in legalActions:
+            for action2 in actions:
                 if self.getQValue(nextState,action2) > max_value:
                     max_value = self.getQValue(nextState,action2)
         # if there are no legal actions:
