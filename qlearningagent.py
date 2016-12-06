@@ -16,7 +16,7 @@ class QLearner:
         return self.weights
 
     def getQValue(self, state, action):
-        features = featureExtractor(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
+        features = featureExtractor.getFeatures(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
         feature_keys = features.sortedKeys()
         q_sum = 0
         for feature in feature_keys:
@@ -37,7 +37,7 @@ class QLearner:
           Computes the best action to take in a state.  If no legal actions,
           eg. at the terminal state, returns None.
         """
-        actions = self.legalActions        
+        actions = self.legalActions
         vals = [self.getQValue(state, a) for a in actions]
         maxVal = max(vals)
         bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
@@ -67,11 +67,11 @@ class QLearner:
 
     def update(self, state, action, nextState, reward):
         # extract features
-        features = featureExtractor(state,action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
+        features = featureExtractor.getFeatures(state,action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
         feature_keys = features.sortedKeys()
         # first we find the max Q-value over possible actions
         actions = self.legalActions
-        if actions: 
+        if actions:
             max_value = -float("inf")
             for action2 in actions:
                 if self.getQValue(nextState,action2) > max_value:
