@@ -17,7 +17,8 @@ class QLearner:
 
     def getQValue(self, state, action):
         features = featureExtractor.getFeatures(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
-        feature_keys = features.sortedKeys()
+        feature_keys = features.keys()
+        feature_keys.sort()
         q_sum = 0
         for feature in feature_keys:
             q_sum = q_sum + self.weights[feature]*features[feature] #increment q value sum
@@ -68,7 +69,8 @@ class QLearner:
     def update(self, state, action, nextState, reward):
         # extract features
         features = featureExtractor.getFeatures(state,action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
-        feature_keys = features.sortedKeys()
+        feature_keys = features.keys()
+        feature_keys.sort()
         # first we find the max Q-value over possible actions
         actions = self.legalActions
         if actions:
