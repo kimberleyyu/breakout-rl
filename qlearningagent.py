@@ -1,5 +1,6 @@
 # the Q learning code
 import featureExtractor, util
+import random
 
 class QLearner:
     def __init__(self, legalActions, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0):
@@ -9,6 +10,7 @@ class QLearner:
         self.numTraining = numTraining
         self.weights = util.Counter()
         self.legalActions = legalActions
+        self.discount = 0.8
 
     # I'm not sure about this function in the context of the Open AI gyme
 
@@ -16,8 +18,9 @@ class QLearner:
         return self.weights
 
     def getQValue(self, state, action):
-        features = featureExtractor(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
-        feature_keys = features.sortedKeys()
+        features = featureExtractor.getFeatures(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
+        feature_keys = features.keys()
+        feature_keys.sort()
         q_sum = 0
         for feature in feature_keys:
             q_sum = q_sum + self.weights[feature]*features[feature] #increment q value sum
@@ -37,7 +40,7 @@ class QLearner:
           Computes the best action to take in a state.  If no legal actions,
           eg. at the terminal state, returns None.
         """
-        actions = self.legalActions        
+        actions = self.legalActions
         vals = [self.getQValue(state, a) for a in actions]
         maxVal = max(vals)
         bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
@@ -67,11 +70,12 @@ class QLearner:
 
     def update(self, state, action, nextState, reward):
         # extract features
-        features = featureExtractor(state,action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
-        feature_keys = features.sortedKeys()
+        features = featureExtractor.getFeatures(state,action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
+        feature_keys = features.keys()
+        feature_keys.sort()
         # first we find the max Q-value over possible actions
         actions = self.legalActions
-        if actions: 
+        if actions:
             max_value = -float("inf")
             for action2 in actions:
                 if self.getQValue(nextState,action2) > max_value:
