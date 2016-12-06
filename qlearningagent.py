@@ -1,5 +1,6 @@
 # the Q learning code
 import featureExtractor, util
+import random
 
 class QLearner:
     def __init__(self, legalActions, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0):
@@ -9,6 +10,7 @@ class QLearner:
         self.numTraining = numTraining
         self.weights = util.Counter()
         self.legalActions = legalActions
+        self.discount = 0.8
 
     # I'm not sure about this function in the context of the Open AI gyme
 

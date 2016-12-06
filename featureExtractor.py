@@ -49,8 +49,7 @@ def getFeatures(state, action): ## didn't use the action at all here
             if list(RGB_num) == [200, 72, 72]:
                 allx.append(i)
                 ally.append(j)
-    print allx, ally
-
+    
     ball_xpos = np.median(allx) # if we do center of ball
     ball_ypos = np.median(ally)
 
