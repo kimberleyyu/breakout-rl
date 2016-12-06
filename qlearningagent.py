@@ -2,50 +2,80 @@
 import featureExtractor, util
 
 class QLearner:
-    def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0):
+    def __init__(self, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0, discount = 0.95):
         self.epsilon = epsilon
         self.gamma = gamma
         self.alpha = alpha
         self.numTraining = numTraining
         self.weights = util.Counter()
-#from pacman, need to change
-class ApproximateQAgent(PacmanQAgent):
-    """
-       ApproximateQLearningAgent
+        self.discount = discount
 
-       You should only have to overwrite getQValue
-       and update.  All other QLearningAgent functions
-       should work as is.
-    """
-    def __init__(self, extractor='IdentityExtractor', **args):
-        self.featExtractor = util.lookup(extractor, globals())()
-        PacmanQAgent.__init__(self, **args)
-        self.weights = util.Counter()
+    # I'm not sure about this function in the context of the Open AI gym
+    def getLegalActions(self):
+        return env.action_space
 
     def getWeights(self):
         return self.weights
 
     def getQValue(self, state, action):
-        """
-          Should return Q(state,action) = w * featureVector
-          where * is the dotProduct operator
-        """
-        "*** YOUR CODE HERE ***"
-        features = self.featExtractor.getFeatures(state,action) # get feature dict
+        features = featureExtractor(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
         feature_keys = features.sortedKeys()
         q_sum = 0
         for feature in feature_keys:
             q_sum = q_sum + self.weights[feature]*features[feature] #increment q value sum
         return q_sum
 
+    def computeValueFromQValues(self, state):
+        """
+          Returns max_action Q(state,action) where the max is over
+          legal actions.  If no legal actions, returns a value of 0.0.
+        """
+        actions = self.getLegalActions(state)
+        if len(actions) == 0:
+            return 0.0
+        else:
+            vals = [self.getQValue(state, a) for a in actions]
+            return max(vals)
+
+    def computeActionFromQValues(self, state):
+        """
+          Computes the best action to take in a state.  If no legal actions,
+          eg. at the terminal state, returns None.
+        """
+        actions = self.getLegalActions(state)
+        if len(actions) == 0:
+            return None
+        else:
+            vals = [self.getQValue(state, a) for a in actions]
+            maxVal = max(vals)
+            bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
+            return random.choice(bestActions)
+
+    def getAction(self, state):
+        """
+          Computes the action to take in the current state.  With
+          probability self.epsilon, it takes a random action and
+          take the best policy action otherwise.  If there are
+          no legal actions, eg. at the terminal state, returns None.
+        """
+        # Pick Action
+        legalActions = self.getLegalActions(state)
+        action = None
+        if util.flipCoin(self.epsilon):
+            return random.choice(legalActions)
+        else:
+            action = self.computeActionFromQValues(state)
+        return action
+
+    def getPolicy(self, state):
+        return self.computeActionFromQValues(state)
+
+    def getValue(self, state):
+        return self.computeValueFromQValues(state)
 
     def update(self, state, action, nextState, reward):
-        """
-           Should update your weights based on transition
-        """
-        "*** YOUR CODE HERE ***"
         # extract features
-        features = self.featExtractor.getFeatures(state,action)
+        features = featureExtractor(state,action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
         feature_keys = features.sortedKeys()
         # first we find the max Q-value over possible actions
         legalActions = self.getLegalActions(nextState)

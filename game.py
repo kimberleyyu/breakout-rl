@@ -9,7 +9,7 @@ for i_episode in range(5):
     state = env.reset()
     for t in range(100):
         env.render()
-        agent = qlearningagent.QLearner(epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0)
+        agent = qlearningagent.QLearner(epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0) # do we include discount gamma here?
         action = QLearner.getAction(state) # should this be action = agent.getAction(state)?
         nextState, reward, done, info = env.step(action)
         QLearner.update(state, action, nextState, reward) # should this be agent.update(state, action, nextState, reward)?
