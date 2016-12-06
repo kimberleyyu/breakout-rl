@@ -28,16 +28,16 @@ import numpy as np
 
 
 # returns dict with keys [paddle, ballx, bally]
-def getFeatures(self, state):
+def getFeatures(state, action): ## didn't use the action at all here
 
     ## paddle position (get from pixel image by color and location)
-    self.features = dict()
+    features = dict()
 
     paddle_possible_xpos = state[189, 8:152, :] # only 189 necessary because all heights are same
     paddle_allx = [i for i, RGB_num in enumerate(paddle_possible_xpos) if list(RGB_num) == [200, 72, 72]]
-    paddlex_leftx = paddle_allx[0]
+    paddle_leftx = paddle_allx[0]
 
-    self.features["paddle"] = paddle_leftx
+    features["paddle"] = paddle_leftx
 
     ## ball x and y positions
     ball_possible_pos = state[93:193, 8:152, :] # blocks stop at 31; we're only considering if ball is below blocks
@@ -54,7 +54,7 @@ def getFeatures(self, state):
     ball_xpos = np.median(allx) # if we do center of ball
     ball_ypos = np.median(ally)
 
-    self.features["ballx"] = ball_xpos # ball x position
-    self.features["bally"] = ball_ypos # ball y position
+    features["ballx"] = ball_xpos # ball x position
+    features["bally"] = ball_ypos # ball y position
 
-    return self.features
+    return features
