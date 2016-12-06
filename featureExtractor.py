@@ -28,32 +28,54 @@ import numpy as np
 
 
 # returns dict with keys [paddle, ballx, bally]
-def getFeatures(state, action): ## didn't use the action at all here
+# def getFeatures(state, action): ## didn't use the action at all here
 
-    ## paddle position (get from pixel image by color and location)
-    features = dict()
+#     ## paddle position (get from pixel image by color and location)
+#     features = dict()
 
-    paddle_possible_xpos = state[189, 8:152, :] # only 189 necessary because all heights are same
-    paddle_allx = [i for i, RGB_num in enumerate(paddle_possible_xpos) if list(RGB_num) == [200, 72, 72]]
-    paddle_leftx = paddle_allx[0]
+#     paddle_possible_xpos = state[189, 8:152, :] # only 189 necessary because all heights are same
+#     paddle_allx = [i for i, RGB_num in enumerate(paddle_possible_xpos) if list(RGB_num) == [200, 72, 72]]
+#     paddle_leftx = paddle_allx[0]
 
-    features["paddle"] = paddle_leftx
+#     features["paddle"] = paddle_leftx
 
-    ## ball x and y positions
-    ball_possible_pos = state[93:193, 8:152, :] # blocks stop at 31; we're only considering if ball is below blocks
+#     ## ball x and y positions
+#     ball_possible_pos = state[93:193, 8:152, :] # blocks stop at 31; we're only considering if ball is below blocks
 
-    allx = list()
-    ally = list()
-    for i, col in enumerate(ball_possible_pos):
-        for j, RGB_num in enumerate(col):
-            if list(RGB_num) == [200, 72, 72]:
-                allx.append(i)
-                ally.append(j)
+#     allx = list()
+#     ally = list()
+#     for i, col in enumerate(ball_possible_pos):
+#         for j, RGB_num in enumerate(col):
+#             if list(RGB_num) == [200, 72, 72]:
+#                 allx.append(i)
+#                 ally.append(j)
     
-    ball_xpos = np.median(allx) # if we do center of ball
-    ball_ypos = np.median(ally)
+#     ball_xpos = np.median(allx) # if we do center of ball
+#     ball_ypos = np.median(ally)
 
-    features["ballx"] = ball_xpos # ball x position
-    features["bally"] = ball_ypos # ball y position
+#     features["ballx"] = ball_xpos # ball x position
+#     features["bally"] = ball_ypos # ball y position
 
+#     return features
+BOTTOM_BLOCK_ROW = 93
+TOP_PADDLE_ROW = 189
+SCREEN_L = 8
+SCREEN_R = 152
+MIDDLE_X = 80
+
+def getFeatures(version, state, action): ## didn't use the action at all here
+    features = dict()
+    if version==0:
+        ## get possible paddle positions (get from pixel image by color and location)
+        paddle_xpos = state[TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0] 
+        # find the first non-zero value in the list (i.e. the first non-black pixel in that row) 
+        features["paddlex"] = next((i for i, x in enumerate(paddle_xpos) if x), MIDDLE_X)
+
+        ## get possible ball x positions between the bottom block row and top paddle row
+        ball_xpos = np.sum(state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0], axis=0)
+        # find the first non-zero value in the list (i.e. the first non-black pixel in that row) 
+        # if ball cannot be found between the bottom block row and top paddle row
+        # guess that it's in the center of the x axis
+        features["ballx"] = next((i for i, x in enumerate(ball_xpos) if x), MIDDLE_X)
+        features["diffx"] = features["ballx"] - features['paddlex']
     return features
