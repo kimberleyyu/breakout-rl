@@ -3,7 +3,7 @@ import featureExtractor, util
 import random
 
 class QLearner:
-    def __init__(self, legalActions, featureVersion, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0):
+    def __init__(self, legalActions, featureVersion, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=1000):
         self.legalActions = legalActions
         self.featureVersion = featureVersion
         self.epsilon = epsilon
@@ -43,10 +43,7 @@ class QLearner:
           eg. at the terminal state, returns None.
         """
         actions = self.legalActions
-        print self.weights
-        print "actions", actions
         vals = [self.getQValue(state, a) for a in actions]
-        print vals
         maxVal = max(vals)
         # print maxVal
         bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
@@ -94,3 +91,6 @@ class QLearner:
         # loop over features to update their weights
         for feature in feature_keys:
             self.weights[feature] = self.weights[feature] + self.alpha*difference*features[feature]
+        self.numTraining -= 1
+        if self.numTraining < 0:
+            self.epsilon = 0

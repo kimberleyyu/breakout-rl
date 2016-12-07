@@ -13,7 +13,6 @@ for i_episode in range(1000):
         env.render()
         action = agent.getAction(state)
         nextState, reward, done, info = env.step(action)
-        print "reward", reward
         agent.update(state, action, nextState, reward)
         nextState = state
         # end if done
