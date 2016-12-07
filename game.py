@@ -7,11 +7,10 @@ env = gym.make('Breakout-v0')
 # play the game 5 times
 for i_episode in range(1000):
     state = env.reset()
+    legalActions = range(env.action_space.n)
+    agent = qlearningagent.QLearner(legalActions, featureVersion = 1, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0)
     for t in range(10000):
         env.render()
-        legalActions = range(env.action_space.n)
-
-        agent = qlearningagent.QLearner(legalActions, featureVersion = 0, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=0)
         action = agent.getAction(state)
         nextState, reward, done, info = env.step(action)
         agent.update(state, action, nextState, reward)
