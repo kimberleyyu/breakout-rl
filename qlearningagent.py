@@ -43,8 +43,12 @@ class QLearner:
           eg. at the terminal state, returns None.
         """
         actions = self.legalActions
+        print self.weights
+        print "actions", actions
         vals = [self.getQValue(state, a) for a in actions]
+        print vals
         maxVal = max(vals)
+        # print maxVal
         bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
         return random.choice(bestActions)
 
