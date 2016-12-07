@@ -3,7 +3,7 @@ import numpy as np
 
 env = gym.make('Breakout-v0')
 observation = env.reset()
-print np.unique(observation)
+# print np.unique(observation)
 # all the colors
 # colors = set([])
 # for i in range(210):
@@ -21,11 +21,20 @@ print np.unique(observation)
 
 # paddle size 
 paddle = []
+# for i in range(8, 152+1):
+# 	if observation[189][i][0] != 0:
+# 		paddle.append(i)
+# print paddle
+# print len(paddle)
+
+# screen L and screen R
 for i in range(160):
-	if observation[189][i][0] != 0:
+	if observation[188][i][0] != 0:
 		paddle.append(i)
 print paddle
 print len(paddle)
+
+print np.unique(observation[0][0][0])
 #> Discrete(2)
 # print "obs space", env.observation_space
 # print "obs space high", env.observation_space.high
@@ -39,7 +48,7 @@ print len(paddle)
 #     env.step(0)
 #     print 0
 
-for i in range(100):
+for i in range(1000):
 	env.render()
 	env.step(1)
 # for i in range(100):

@@ -1,9 +1,8 @@
-# the Q learning code
 import featureExtractor, util
 import random
 
 class QLearner:
-    def __init__(self, legalActions, featureVersion, epsilon=0.05,gamma=0.8,alpha=0.2, numTraining=1000):
+    def __init__(self, legalActions, featureVersion, epsilon=0.05,gamma=0.99,alpha=0.2, numTraining=1000):
         self.legalActions = legalActions
         self.featureVersion = featureVersion
         self.epsilon = epsilon
@@ -44,6 +43,7 @@ class QLearner:
         """
         actions = self.legalActions
         vals = [self.getQValue(state, a) for a in actions]
+        # print vals
         maxVal = max(vals)
         # print maxVal
         bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
