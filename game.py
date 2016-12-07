@@ -4,7 +4,7 @@ env = gym.make('Breakout-v0')
 # for monitoring how we are doing
 # env.monitor.start('breakout-experiment-2')
 legalActions = range(env.action_space.n)
-agent = qlearningagent.QLearner(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.8,alpha=0.02, numTraining=0)
+agent = qlearningagent.QLearner(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.8,alpha=0.02, numTraining=10000)
 # play the game 5 times
 for i_episode in range(1000):
     "**********started over**************"
