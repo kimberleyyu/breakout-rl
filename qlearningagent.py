@@ -43,9 +43,7 @@ class QLearner:
         """
         actions = self.legalActions
         vals = [self.getQValue(state, a) for a in actions]
-        # print vals
         maxVal = max(vals)
-        # print maxVal
         bestActions = [a for a in actions if self.getQValue(state, a) == maxVal]
         return random.choice(bestActions)
 
