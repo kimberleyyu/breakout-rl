@@ -5,7 +5,7 @@ env = gym.make('Breakout-v0')
 # env.monitor.start('breakout-experiment-2')
 
 # play the game 5 times
-for i_episode in range(20):
+for i_episode in range(1000):
     state = env.reset()
     for t in range(10000):
         env.render()

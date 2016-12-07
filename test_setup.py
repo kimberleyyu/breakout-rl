@@ -12,13 +12,20 @@ print np.unique(observation)
 # print colors
 
 # discretizing parts of the screen
-for i in range(210):
-	if observation[i][80][0] == 0:
-		print i
+# for i in range(210):
+# 	if observation[i][80][0] == 0:
+# 		print i
 
 # 0 - 16
 # 32 - 209
 
+# paddle size 
+paddle = []
+for i in range(160):
+	if observation[189][i][0] != 0:
+		paddle.append(i)
+print paddle
+print len(paddle)
 #> Discrete(2)
 # print "obs space", env.observation_space
 # print "obs space high", env.observation_space.high
