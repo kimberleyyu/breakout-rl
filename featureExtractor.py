@@ -84,7 +84,7 @@ def getFeatures(version, state, action): ## didn't use the action at all here
         features["paddlex"] = features["paddlex"]/32
         features["ballx"] = features["ballx"]/32
         features["bally"] = features["bally"]/50
-        print "number values", len(np.unique(features.values))
+        print "features", features
     # else:
 
     return features
