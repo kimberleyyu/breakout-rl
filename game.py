@@ -2,7 +2,7 @@ import gym
 import qlearningagent
 env = gym.make('Breakout-v0')
 # for monitoring how we are doing
-env.monitor.start('/tmp/breakout-experiment-1')
+#env.monitor.start('/tmp/breakout-experiment-1')
 
 # play the game 5 times
 for i_episode in range(5):
@@ -20,4 +20,4 @@ for i_episode in range(5):
         if done:
             print("Episode finished after {} timesteps".format(t+1))
             break
-env.monitor.close()
+#env.monitor.close()
