@@ -14,10 +14,6 @@ class QLearner:
 
 
     # I'm not sure about this function in the context of the Open AI gyme
-
-    def getWeights(self):
-        return self.weights
-
     def getQValue(self, state, action):
         features = featureExtractor.getFeatures(self.featureVersion,state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
         feature_keys = features.keys()
@@ -26,15 +22,6 @@ class QLearner:
         for feature in feature_keys:
             q_sum = q_sum + self.weights[feature]*features[feature] #increment q value sum
         return q_sum
-
-    def computeValueFromQValues(self, state):
-        """
-          Returns max_action Q(state,action) where the max is over
-          legal actions.  If no legal actions, returns a value of 0.0.
-        """
-        actions = self.legalActions
-        vals = [self.getQValue(state, a) for a in actions]
-        return max(vals)
 
     def computeActionFromQValues(self, state):
         """
@@ -63,12 +50,6 @@ class QLearner:
             action = self.computeActionFromQValues(state)
         return action
 
-    def getPolicy(self, state):
-        return self.computeActionFromQValues(state)
-
-    def getValue(self, state):
-        return self.computeValueFromQValues(state)
-
     def update(self, state, action, nextState, reward):
         # extract features
         features = featureExtractor.getFeatures(self.featureVersion, state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
@@ -92,3 +73,4 @@ class QLearner:
         self.numTraining -= 1
         if self.numTraining < 0:
             self.epsilon = 0
+        return self.weights

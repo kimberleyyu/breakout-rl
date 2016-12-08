@@ -27,6 +27,10 @@ def getFeatures(version, state, action): ## didn't use the action at all here
         features["paddlex"] = features["paddlex"]/32
         features["ballx"] = features["ballx"]/32
         features["bally"] = features["bally"]/50
-    # else:
+        # features["paddlex"] = features["paddlex"]/8
+        # features["ballx"] = features["ballx"]/8
+        # features["bally"] = features["bally"]/10
+    # if version >= 3:
+        
 
     return features
