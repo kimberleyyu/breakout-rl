@@ -25,39 +25,59 @@ env = gym.make('Breakout-v0')
 #Qlearner vs. Qlearner+ (+ ver has prev state incorporated to calculate better features, like trajectory)
 
 legalActions = range(env.action_space.n)
-agent = qlearningagent.QLearner(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.8,alpha=0.02, numTraining=10000)
+agent = qlearningagent.QLearner(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining=10000)
+# agent = qlearningagent.QLearnerPlus(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining=10000)
 lengths = []
 rewards = []
-
+weights_over_time = []
+end = False
 # play the game 5 times
-for i_episode in range(200):
+for i_episode in range(5050):
     r = 0
     state = env.reset()
+    #prev_state = state 
     for t in range(10000):
         env.render()
         action = agent.getAction(state)
+        # action = agent.getAction(state, prev_state)
         nextState, reward, done, info = env.step(action)
         r +=reward
         if ballFell(nextState):
             reward = -1
-        agent.update(state, action, nextState, reward)
-        nextState = state
+        weights = agent.update(state, action, nextState, reward)
+        # weights = agent.update(state, prev_state, action, nextState, reward)
+        weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
+        if abs(weights["ballx"]) > 10**305:
+            print("Episode finished after {} timesteps with {} reward".format(t+1, r))
+            lengths.append(t+1)
+            rewards.append(r)
+            end = True
+            break
+        # nextState = state
+        prev_state = state
+        state = nextState
         # end if done
         if done:
             print("Episode finished after {} timesteps with {} reward".format(t+1, r))
             lengths.append(t+1)
             rewards.append(r)
             break
-
+    if end:
+        break
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.plot(lengths)
-fig.savefig('lengths.png')
+fig.savefig('lengthsdis.png')
 
 fig = plt.figure()
-ax = fig.add_subplot(112)
-ax.plot(rewards)
-fig.savefig('rewards.png')
+ax1 = fig.add_subplot(111)
+ax1.plot(rewards)
+fig.savefig('rewardsdis.png')
+
+fig = plt.figure()
+ax2 = fig.add_subplot(111)
+ax2.plot(weights_over_time)
+fig.savefig('weightsnondisz.png')
 print "Lengths: mean", np.mean(lengths), "std", np.std(lengths)
 print "Rewards: mean", np.mean(rewards), "std", np.std(rewards)
 # env.monitor.close()
