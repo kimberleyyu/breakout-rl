@@ -74,3 +74,66 @@ class QLearner:
         if self.numTraining < 0:
             self.epsilon = 0
         return self.weights
+
+class QLearnerPlus(QLearner):
+
+    def getQValue(self, state, prev_state, action):
+        features = featureExtractor.getFeaturesPlus(self.featureVersion,state, prev_state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
+        feature_keys = features.keys()
+        feature_keys.sort()
+        q_sum = 0
+        for feature in feature_keys:
+            q_sum = q_sum + self.weights[feature]*features[feature] #increment q value sum
+        return q_sum
+
+    def computeActionFromQValues(self, state, prev_state):
+        """
+          Computes the best action to take in a state.  If no legal actions,
+          eg. at the terminal state, returns None.
+        """
+        actions = self.legalActions
+        vals = [self.getQValue(state, prev_state, a) for a in actions]
+        maxVal = max(vals)
+        bestActions = [a for a in actions if self.getQValue(state, prev_state, a) == maxVal]
+        return random.choice(bestActions)
+
+    def getAction(self, state, prev_state):
+        """
+          Computes the action to take in the current state.  With
+          probability self.epsilon, it takes a random action and
+          take the best policy action otherwise.  If there are
+          no legal actions, eg. at the terminal state, returns None.
+        """
+        # Pick Action
+        actions = self.legalActions
+        action = None
+        if util.flipCoin(self.epsilon):
+            return random.choice(actions)
+        else:
+            action = self.computeActionFromQValues(state, prev_state)
+        return action
+
+    def update(self, state, prev_state, action, nextState, reward):
+        # extract features
+        features = featureExtractor.getFeaturesPlus(self.featureVersion, state, prev_state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
+        feature_keys = features.keys()
+        feature_keys.sort()
+        # first we find the max Q-value over possible actions
+        actions = self.legalActions
+        if actions:
+            max_value = -float("inf")
+            for action2 in actions:
+                if self.getQValue(nextState,state, action2) > max_value:
+                    max_value = self.getQValue(nextState,state, action2)
+        # if there are no legal actions:
+        else:
+            max_value = 0.0
+        # calculate difference between predicted and observed value
+        difference = (reward + self.discount*max_value) - self.getQValue(state,prev_state, action)
+        # loop over features to update their weights
+        for feature in feature_keys:
+            self.weights[feature] = self.weights[feature] + self.alpha*difference*features[feature]
+        self.numTraining -= 1
+        if self.numTraining < 0:
+            self.epsilon = 0
+        return self.weights

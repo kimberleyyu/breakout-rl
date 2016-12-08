@@ -20,23 +20,26 @@ env = gym.make('Breakout-v0')
 # env.monitor.start('breakout-experiment-3')
 legalActions = range(env.action_space.n)
 agent = qlearningagent.QLearner(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining=10000)
+# agent = qlearningagent.QLearnerPlus(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining=10000)
 lengths = []
 rewards = []
 weights_over_time = []
 end = False
 # play the game 5 times
-for i_episode in range(200):
+for i_episode in range(5050):
     r = 0
     state = env.reset() 
     prev_state = state 
     for t in range(10000):
         env.render()
-        action = agent.getAction(state, prev_state)
+        action = agent.getAction(state)
+        # action = agent.getAction(state, prev_state)
         nextState, reward, done, info = env.step(action)
         r +=reward
         if ballFell(nextState):
             reward = -1
         weights = agent.update(state, action, nextState, reward)
+        # weights = agent.update(state, prev_state, action, nextState, reward)
         weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
         if abs(weights["ballx"]) > 10**305:
             print("Episode finished after {} timesteps with {} reward".format(t+1, r))

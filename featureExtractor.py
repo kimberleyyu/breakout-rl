@@ -31,6 +31,33 @@ def getFeatures(version, state, action): ## didn't use the action at all here
         # features["ballx"] = features["ballx"]/8
         # features["bally"] = features["bally"]/10
     # if version >= 3:
-        
 
+
+    return features
+
+def getFeaturesPlus(version, state, prev_state, action): ## didn't use the action at all here
+    features = getFeatures(version, state, action)
+    # add exactly where the ball will land 
+    ball_prev_xpos = np.sum(state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0], axis=0)
+    feature_ballx_prev = next((i for i, x in enumerate(ball_prev_xpos) if x), MIDDLE_X)
+    ball_prev_ypos = state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, feature_ballx_prev, 0]
+    feature_bally_prev = next((i for i, x in enumerate(ball_prev_ypos) if x), MIDDLE_Y)
+    # if ball on downward slope:
+    if feature_bally_prev < features['bally']:
+        features['directionDown'] = 1
+        y_to_descend = TOP_PADDLE_ROW - features['bally']
+        steps_left = y_to_descend/(features['bally']- feature_bally_prev)
+        # features['landing'] = features['ballx'] + (features['ballx'] - feature_ballx_prev)*steps_left
+        land_x = features['ballx'] + (features['ballx'] - feature_ballx_prev)*steps_left
+        if features['paddlex'] > land_x:
+            features['landing'] = 1
+        elif features['paddlex'] < land_x:
+            features['landing'] = -1
+        else:
+            features['landing'] = 0
+    else:
+        features['directionDown'] = 0
+        # features['landing'] = features['ballx']
+        features['landing'] = 0
+        
     return features
