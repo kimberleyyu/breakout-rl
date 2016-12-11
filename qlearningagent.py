@@ -1,3 +1,5 @@
+### Frances Ding, Lily Zhang, Kimberley Yu
+
 import featureExtractor, util
 import random
 
@@ -10,7 +12,6 @@ class QLearner:
         self.numTraining = numTraining
         self.weights = util.Counter()
         self.discount = 0.8
-
 
     def getQValue(self, state, action):
         features = featureExtractor.getFeatures(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR

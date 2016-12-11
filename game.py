@@ -1,3 +1,12 @@
+### Frances Ding, Lily Zhang, Kimberley Yu
+
+# to run:
+# python game.py --QLearnerPlus --epsilon 0.1 --gamma 0.9 --alpha 0.05 --numtrain 1000
+# all arguments are optional
+# order of arguments doesn't matter
+# use --QLearnerPlus if you want to use our version with the two additional features.
+# use --epsilon, --gamma, --alpha, and/or --numtrain if you want to adjust those parameters. The first 3 must be floats and the last must be an int.
+
 import gym
 import qlearningagent
 import numpy as np
@@ -17,13 +26,13 @@ def ballFell(state):
 
 ## input command-line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--epsilon', dest='epsilon', default=0.05, required=False, type=int, help='exploration rate for epsilon-greedy')
-parser.add_argument('--gamma', default=0.99, required=False, type=int, help='discount factor')
-parser.add_argument('--alpha', default=0.02, required=False, type=int, help='learning rate')
+parser.add_argument('--epsilon', dest='epsilon', default=0.05, required=False, type=float, help='exploration rate for epsilon-greedy')
+parser.add_argument('--gamma', default=0.99, required=False, type=float, help='discount factor')
+parser.add_argument('--alpha', default=0.02, required=False, type=float, help='learning rate')
 parser.add_argument('--numtrain', default=10000, required=False, type=int, help='number of training episodes')
 
-parser.add_argument('--QLearnerPlus', dest='qplus', action='store_true')
-parser.set_defaults(feature=False)
+parser.add_argument('--QLearnerPlus', dest='qplus', action='store_true', help="Add this argument if you want to run QLearnerPlus.")
+parser.set_defaults(feature=False).
 
 args = parser.parse_args()
 

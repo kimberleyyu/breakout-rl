@@ -1,3 +1,5 @@
+### Frances Ding, Lily Zhang, Kimberley Yu
+
 import numpy as np
 
 BOTTOM_BLOCK_ROW = 93
