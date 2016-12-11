@@ -17,9 +17,21 @@ def ballFell(state):
 
 ## input command-line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--')
+parser.add_argument('--'featureVersion = 2, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining)
 
+parser.add_argument('--path', default='.', required=False, type=str, help='Path to folder that stores all inputs and outputs. Default: current folder')
+parser.add_argument('--event_type', default='NA', required=False, type=str, help='SE, RI, AFE, ALE, or TandemUTR. Default: NA')
+parser.add_argument('--event_info', required=False, type=str, help='to get strands of events. Must contain columns "event" and "strand" (full path)')
+parser.add_argument('--motif_type', default='kmer', required=False, type=str, help='kmer or pwm')
+parser.add_argument('--motif', required=True, type=str, help='motif to test, either a kmer string or filename of PWM table')
+parser.add_argument('--genome', required=False, type=str, help='reference genome fasta file for getting sequences around SNPs (full path)')
+#    parser.add_argument('--input_path', required=True, type=str, help='Foreground SNP table to test for enrichment against background SNPs. Must contain columns "snp_position", "snp_id", and "snp_chr"')
+# the actual output with snp, event, statistic, FDR, pvalue, etc instead of position (get positions from background file instead)
+parser.add_argument('--input_path', required=True, type=str, help='annotated matrixQTL output file. Must contain columns "snps", "event", "pvalue", and "FDR"')
+parser.add_argument('--background_path', default='genotype.code.02.10.16.dat', required=True, type=str, help='Background SNP table. Must contain columns "snp_position", "snp_id", "snp_chr", "genotype_code_0", and "genotype_code_2"')
+args = parser.parse_args()
 
+path = args.path
 
 
 env = gym.make('Breakout-v0')
