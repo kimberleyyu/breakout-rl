@@ -18,6 +18,12 @@ def ballFell(state):
 env = gym.make('Breakout-v0')
 # for monitoring how we are doing
 # env.monitor.start('breakout-experiment-3')
+
+### implement systems io stuff (actually athma's parser stuff) for the arguments in
+#QLearner init (epsilon, gamma, alpha, numTraining)
+#fig names to save
+#Qlearner vs. Qlearner+ (+ ver has prev state incorporated to calculate better features, like trajectory)
+
 legalActions = range(env.action_space.n)
 agent = qlearningagent.QLearner(legalActions, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining=10000)
 #### agent = qlearningagent.QLearnerPlus(legalActions, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining=10000)
@@ -28,8 +34,8 @@ end = False
 # play the game 5 times
 for i_episode in range(200):
     r = 0
-    state = env.reset() 
-    prev_state = state 
+    state = env.reset()
+    #prev_state = state 
     for t in range(10000):
         env.render()
         action = agent.getAction(state)
@@ -48,7 +54,7 @@ for i_episode in range(200):
             end = True
             break
         # nextState = state
-        prev_state = state 
+        prev_state = state
         state = nextState
         # end if done
         if done:
@@ -75,5 +81,3 @@ fig.savefig('weightslonglanding.png')
 print "Lengths: mean", np.mean(lengths), "std", np.std(lengths)
 print "Rewards: mean", np.mean(rewards), "std", np.std(rewards)
 # env.monitor.close()
-
-
