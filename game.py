@@ -2,6 +2,7 @@ import gym
 import qlearningagent
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 
 TOP_PADDLE_ROW = 189
 SCREEN_L = 8
@@ -13,6 +14,12 @@ def ballFell(state):
         if state[TOP_PADDLE_ROW][i][0] == 0 and state[TOP_PADDLE_ROW][i+1][0] != 0 and state[TOP_PADDLE_ROW][i+3][0] == 0:
             return True
     return False
+
+## input command-line arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('--')
+
+
 
 
 env = gym.make('Breakout-v0')
@@ -35,7 +42,7 @@ end = False
 for i_episode in range(5050):
     r = 0
     state = env.reset()
-    #prev_state = state 
+    #prev_state = state
     for t in range(10000):
         env.render()
         action = agent.getAction(state)
