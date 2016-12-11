@@ -2,9 +2,8 @@ import featureExtractor, util
 import random
 
 class QLearner:
-    def __init__(self, legalActions, featureVersion, epsilon=0.05,gamma=0.99,alpha=0.2, numTraining=1000):
+    def __init__(self, legalActions, epsilon=0.05,gamma=0.99,alpha=0.2, numTraining=1000):
         self.legalActions = legalActions
-        self.featureVersion = featureVersion
         self.epsilon = epsilon
         self.gamma = gamma
         self.alpha = alpha
@@ -14,7 +13,7 @@ class QLearner:
 
 
     def getQValue(self, state, action):
-        features = featureExtractor.getFeatures(self.featureVersion,state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
+        features = featureExtractor.getFeatures(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
         feature_keys = features.keys()
         feature_keys.sort()
         q_sum = 0
@@ -51,7 +50,7 @@ class QLearner:
 
     def update(self, state, action, nextState, reward):
         # extract features
-        features = featureExtractor.getFeatures(self.featureVersion, state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
+        features = featureExtractor.getFeatures(state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
         feature_keys = features.keys()
         feature_keys.sort()
         # first we find the max Q-value over possible actions
@@ -77,7 +76,7 @@ class QLearner:
 class QLearnerPlus(QLearner):
 
     def getQValue(self, state, prev_state, action):
-        features = featureExtractor.getFeaturesPlus(self.featureVersion,state, prev_state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
+        features = featureExtractor.getFeaturesPlus(state, prev_state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
         feature_keys = features.keys()
         feature_keys.sort()
         q_sum = 0
@@ -114,7 +113,7 @@ class QLearnerPlus(QLearner):
 
     def update(self, state, prev_state, action, nextState, reward):
         # extract features
-        features = featureExtractor.getFeaturesPlus(self.featureVersion, state, prev_state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
+        features = featureExtractor.getFeaturesPlus(state, prev_state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
         feature_keys = features.keys()
         feature_keys.sort()
         # first we find the max Q-value over possible actions

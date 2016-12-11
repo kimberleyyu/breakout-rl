@@ -39,13 +39,16 @@ env = gym.make('Breakout-v0')
 # env.monitor.start('breakout-experiment-3')
 
 legalActions = range(env.action_space.n)
-agent = qlearningagent.QLearner(legalActions, featureVersion=qplus, epsilon=epsilon,gamma=gamma,alpha=alpha, numTraining=numTraining)
+if qplus:
+    agent = qlearningagent.QLearnerPlus(legalActions, epsilon=epsilon,gamma=gamma,alpha=alpha, numTraining=numTraining)
+else:
+    agent = qlearningagent.QLearner(legalActions, epsilon=epsilon,gamma=gamma,alpha=alpha, numTraining=numTraining)
 lengths = []
 rewards = []
 weights_over_time = []
 end = False
 # play the game 5 times
-for i_episode in range(5050):
+for i_episode in range(200):
     r = 0
     state = env.reset()
     if qplus:
@@ -56,11 +59,11 @@ for i_episode in range(5050):
             action = agent.getAction(state, prev_state)
         else:
             action = agent.getAction(state)
-
         nextState, reward, done, info = env.step(action)
         r +=reward
         if ballFell(nextState):
             reward = -1
+
         if qplus:
             weights = agent.update(state, prev_state, action, nextState, reward)
         else:
@@ -87,17 +90,17 @@ for i_episode in range(5050):
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.plot(lengths)
-fig.savefig('lengthsdis.png')
+fig.savefig('lengthslonglanding.png')
 
 fig = plt.figure()
 ax1 = fig.add_subplot(111)
 ax1.plot(rewards)
-fig.savefig('rewardsdis.png')
+fig.savefig('rewardslonglanding.png')
 
 fig = plt.figure()
 ax2 = fig.add_subplot(111)
 ax2.plot(weights_over_time)
-fig.savefig('weightsnondisz.png')
+fig.savefig('weightslonglanding.png')
 print "Lengths: mean", np.mean(lengths), "std", np.std(lengths)
 print "Rewards: mean", np.mean(rewards), "std", np.std(rewards)
 # env.monitor.close()
