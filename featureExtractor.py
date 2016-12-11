@@ -17,10 +17,17 @@ def getFeatures(state, action): ## didn't use the action at all here
     features["paddlex"] = next((i for i, x in enumerate(paddle_xpos) if x), MIDDLE_X)
     ## get possible ball x positions between the bottom block row and top paddle row
     ball_xpos = np.sum(state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0], axis=0)
+    # if sum(ball_xpos) == 0:
+        # print 1
+    # else:
+        # print 0
+    print ball_xpos
+    # print "************************************"
     # find the first non-zero value in the list (i.e. the first non-black pixel in that row)
     features["ballx"] = next((i for i, x in enumerate(ball_xpos) if x), MIDDLE_X)
 
     ball_ypos = state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, features["ballx"], 0]
+    # print ball_ypos
     features["bally"] = next((i for i, x in enumerate(ball_ypos) if x), MIDDLE_Y)
 
     features["paddlex"] = features["paddlex"]/32

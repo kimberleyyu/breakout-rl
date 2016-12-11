@@ -12,6 +12,7 @@ import qlearningagent
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+import time
 
 TOP_PADDLE_ROW = 189
 SCREEN_L = 8
@@ -33,7 +34,7 @@ parser.add_argument('--alpha', default=0.02, required=False, type=float, help='l
 parser.add_argument('--numtrain', default=10000, required=False, type=int, help='number of training episodes')
 
 parser.add_argument('--QLearnerPlus', dest='qplus', action='store_true', help="Add this argument if you want to run QLearnerPlus.")
-parser.set_defaults(feature=False).
+parser.set_defaults(feature=False)
 
 args = parser.parse_args()
 
@@ -113,6 +114,7 @@ for i_episode in range(200):
             lengths.append(t+1)
             rewards.append(r)
             break
+        time.sleep(1)
     if end:
         break
 fig = plt.figure()
