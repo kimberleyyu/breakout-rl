@@ -9,7 +9,7 @@ MIDDLE_Y = (BOTTOM_BLOCK_ROW+TOP_PADDLE_ROW)/2
 
 def getFeatures(version, state, action): ## didn't use the action at all here
     features = dict()
-    if version >= 0:
+    if version == False:
         ## get possible paddle positions (get from pixel image by color and location)
         paddle_xpos = state[TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0]
         # find the first non-zero value in the list (i.e. the first non-black pixel in that row)
@@ -19,19 +19,16 @@ def getFeatures(version, state, action): ## didn't use the action at all here
         # find the first non-zero value in the list (i.e. the first non-black pixel in that row)
         features["ballx"] = next((i for i, x in enumerate(ball_xpos) if x), MIDDLE_X)
 
-    if version >= 1:
         ball_ypos = state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, features["ballx"], 0]
         features["bally"] = next((i for i, x in enumerate(ball_ypos) if x), MIDDLE_Y)
 
-    if version >= 2:
+    if version ==True:
         features["paddlex"] = features["paddlex"]/32
         features["ballx"] = features["ballx"]/32
         features["bally"] = features["bally"]/50
         # features["paddlex"] = features["paddlex"]/8
         # features["ballx"] = features["ballx"]/8
         # features["bally"] = features["bally"]/10
-    # if version >= 3:
-
 
     return features
 

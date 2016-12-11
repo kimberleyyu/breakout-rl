@@ -13,7 +13,6 @@ class QLearner:
         self.discount = 0.8
 
 
-    # I'm not sure about this function in the context of the Open AI gyme
     def getQValue(self, state, action):
         features = featureExtractor.getFeatures(self.featureVersion,state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
         feature_keys = features.keys()

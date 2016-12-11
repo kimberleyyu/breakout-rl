@@ -17,35 +17,29 @@ def ballFell(state):
 
 ## input command-line arguments
 parser = argparse.ArgumentParser()
-parser.add_argument('--'featureVersion = 2, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining)
+parser.add_argument('--epsilon', dest='epsilon', default=0.05, required=False, type=int, help='exploration rate for epsilon-greedy')
+parser.add_argument('--gamma', default=0.99, required=False, type=int, help='discount factor')
+parser.add_argument('--alpha', default=0.02, required=False, type=int, help='learning rate')
+parser.add_argument('--numtrain', default=10000, required=False, type=int, help='number of training episodes')
 
-parser.add_argument('--path', default='.', required=False, type=str, help='Path to folder that stores all inputs and outputs. Default: current folder')
-parser.add_argument('--event_type', default='NA', required=False, type=str, help='SE, RI, AFE, ALE, or TandemUTR. Default: NA')
-parser.add_argument('--event_info', required=False, type=str, help='to get strands of events. Must contain columns "event" and "strand" (full path)')
-parser.add_argument('--motif_type', default='kmer', required=False, type=str, help='kmer or pwm')
-parser.add_argument('--motif', required=True, type=str, help='motif to test, either a kmer string or filename of PWM table')
-parser.add_argument('--genome', required=False, type=str, help='reference genome fasta file for getting sequences around SNPs (full path)')
-#    parser.add_argument('--input_path', required=True, type=str, help='Foreground SNP table to test for enrichment against background SNPs. Must contain columns "snp_position", "snp_id", and "snp_chr"')
-# the actual output with snp, event, statistic, FDR, pvalue, etc instead of position (get positions from background file instead)
-parser.add_argument('--input_path', required=True, type=str, help='annotated matrixQTL output file. Must contain columns "snps", "event", "pvalue", and "FDR"')
-parser.add_argument('--background_path', default='genotype.code.02.10.16.dat', required=True, type=str, help='Background SNP table. Must contain columns "snp_position", "snp_id", "snp_chr", "genotype_code_0", and "genotype_code_2"')
+parser.add_argument('--QLearnerPlus', dest='qplus', action='store_true')
+parser.set_defaults(feature=False)
+
 args = parser.parse_args()
 
-path = args.path
+epsilon = args.epsilon
+gamma = args.gamma
+alpha = args.alpha
+numTraining = args.numtrain
+qplus = args.qplus
 
-
+## run breakout
 env = gym.make('Breakout-v0')
 # for monitoring how we are doing
 # env.monitor.start('breakout-experiment-3')
 
-### implement systems io stuff (actually athma's parser stuff) for the arguments in
-#QLearner init (epsilon, gamma, alpha, numTraining)
-#fig names to save
-#Qlearner vs. Qlearner+ (+ ver has prev state incorporated to calculate better features, like trajectory)
-
 legalActions = range(env.action_space.n)
-agent = qlearningagent.QLearner(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining=10000)
-# agent = qlearningagent.QLearnerPlus(legalActions, featureVersion = 2, epsilon=0.05,gamma=0.99,alpha=0.02, numTraining=10000)
+agent = qlearningagent.QLearner(legalActions, featureVersion=qplus, epsilon=epsilon,gamma=gamma,alpha=alpha, numTraining=numTraining)
 lengths = []
 rewards = []
 weights_over_time = []
@@ -54,17 +48,23 @@ end = False
 for i_episode in range(5050):
     r = 0
     state = env.reset()
-    #prev_state = state
+    if qplus:
+        prev_state = state
     for t in range(10000):
         env.render()
-        action = agent.getAction(state)
-        # action = agent.getAction(state, prev_state)
+        if qplus:
+            action = agent.getAction(state, prev_state)
+        else:
+            action = agent.getAction(state)
+
         nextState, reward, done, info = env.step(action)
         r +=reward
         if ballFell(nextState):
             reward = -1
-        weights = agent.update(state, action, nextState, reward)
-        # weights = agent.update(state, prev_state, action, nextState, reward)
+        if qplus:
+            weights = agent.update(state, prev_state, action, nextState, reward)
+        else:
+            weights = agent.update(state, action, nextState, reward)
         weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
         if abs(weights["ballx"]) > 10**305:
             print("Episode finished after {} timesteps with {} reward".format(t+1, r))
@@ -72,9 +72,10 @@ for i_episode in range(5050):
             rewards.append(r)
             end = True
             break
-        # nextState = state
-        prev_state = state
-        state = nextState
+        if qplus:
+            nextState = state
+            prev_state = state
+            state = nextState
         # end if done
         if done:
             print("Episode finished after {} timesteps with {} reward".format(t+1, r))
