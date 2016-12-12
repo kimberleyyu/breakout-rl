@@ -12,6 +12,7 @@ import qlearningagentlambda
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+import time
 
 BOTTOM_BLOCK_ROW = 93
 TOP_PADDLE_ROW = 189
@@ -136,7 +137,8 @@ for i_episode in range(200):
 
         # keep track of the weights over time
         weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
-
+        # a check to prevent an error in the case of the weights blowing up
+        # instead, we stop the game
         if abs(weights["ballx"]) > 10**305:
             print("Episode finished after {} timesteps with {} reward".format(t+1, r))
             lengths.append(t+1)
@@ -144,6 +146,7 @@ for i_episode in range(200):
             end = True
             break
 
+        # if version 2 or 3, update the prev_state; if version 3, also update the action
         if version > 1:
             prev_state = state
             if version==3:
@@ -155,8 +158,12 @@ for i_episode in range(200):
             lengths.append(t+1)
             rewards.append(r)
             break
+        time.sleep(1)
+    # if we need to preemptively end the game because of the weights blowing up
     if end:
         break
+
+# plot the lengths of the episodes, the total rewards, and the weights over time
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.plot(lengths)
