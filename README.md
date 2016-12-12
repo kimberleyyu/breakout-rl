@@ -1,4 +1,6 @@
-# breakout-rl
+# Approximate Q-Learning for the Atari Breakout Game
+## Kimberley Yu, Lily Zhang, Frances Ding
+## CS182 Final Project
 
 First, set up the OpenAI gym code by following the instructions in their documentation: https://gym.openai.com/docs.
 
