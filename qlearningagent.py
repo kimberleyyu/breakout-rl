@@ -239,14 +239,16 @@ class QLearnerPlusLambda(QLearnerPlus):
         feature_keys = features.keys()
         feature_keys.sort()
         for feature in feature_keys:
-            # update eligibility trace for each feature
+            # update eligibility trace by 1 for current feature...
             self.eligibility[feature] = self.eligibility[feature] + 1
+        for feature in feature_keys:
             # update weights based on difference (delta), previous weight, learning rate, and eligibility trace
             self.weights[feature] = self.weights[feature] + self.alpha * delta * self.eligibility[feature]
-            # if the nextAction is the best action, then update the eligibility trace accordingly
+            # if the nextAction is the best action (not chosen randomly),
+            # decay the eligibility trace accordingly for the next lookahead step
             if nextAction == astar:
                 self.eligibility[feature] = self.gamma * self.lambd * self.eligibility[feature]
-            # else set it to zero (since it is not the best action with the greatest reward / Q-value)
+            # else if random exploration action was chosen, restart lookahead
             else:
                 self.eligibility[feature] = 0
 
