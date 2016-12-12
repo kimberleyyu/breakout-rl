@@ -40,8 +40,11 @@ Episode finished after 218 timesteps with 1.0 reward
 At the end, our code will output 3 graphs:
 
 1. Number of time steps per episode vs. Episode number
-    This shows how the length of each episode changes with further training. The file will be named similar to "lengths-v1-e0.05-g0.99-a0.02-n10000-l0.9.png", where each numerical value corresponds to the given arguments (where v=version, e=epsilon, g=gamma, a=alpha, n=numtrain, and l=lambda).
+
+This shows how the length of each episode changes with further training. The file will be named similar to "lengths-v1-e0.05-g0.99-a0.02-n10000-l0.9.png", where each numerical value corresponds to the given arguments (where v=version, e=epsilon, g=gamma, a=alpha, n=numtrain, and l=lambda).
 2. Rewards received vs. Episode number
-    This shows how the amount of reward received changes with further training.
+
+This shows how the amount of reward received changes with further training. The file will be named similar to "rewards-v1-e0.05-g0.99-a0.02-n10000-l0.9.png".
 3. Feature weights vs. Episode number
-    This shows how feature weights change with further training.
+
+This shows how feature weights change with further training. The file will be named similar to "weights-v1-e0.05-g0.99-a0.02-n10000-l0.9.png".
