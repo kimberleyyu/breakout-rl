@@ -83,3 +83,9 @@ def getFeaturesPlus(state, prev_state, action):
         features['landing'] = 0
 
     return features
+
+def getFeatureKeys(version):
+    basic = ['ballx', 'bally', 'paddlex']
+    if version==1:
+        return basic
+    return basic + ['directionDown', 'landing']

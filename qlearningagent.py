@@ -179,7 +179,9 @@ class QLearnerPlusLambda(QLearnerPlus):
         self.weights = util.Counter()
 
         self.lambd = lambd
-        self.eligibility = util.Counter()
+        # nested dict where each feature_key holds the explored values
+        keys = featureExtractor.getFeatureKeys(version=3)
+        self.eligibility = util.Counter(zip(keys, [util.Counter()]*len(keys)))
 
     def getQValue(self, state, prev_state, action):
         """
@@ -225,7 +227,8 @@ class QLearnerPlusLambda(QLearnerPlus):
     def update(self, state, prev_state, nextState, action, nextAction, reward):
         """
             Performs the Q-learning update function and returns the new weights
-            for all features. Uses eligibility traces to do so.
+            for all features. Uses eligibility traces to keep temporary record of
+            successes and errors and thereby propagate rewards.
         """
         # Q(lambda) update function, as according to the Watkins algorithm
 
@@ -238,19 +241,22 @@ class QLearnerPlusLambda(QLearnerPlus):
         features = featureExtractor.getFeaturesPlus(state, prev_state, action)
         feature_keys = features.keys()
         feature_keys.sort()
-        for feature in feature_keys:
-            # update eligibility trace by 1 for current feature...
-            self.eligibility[feature] = self.eligibility[feature] + 1
-        for feature in feature_keys:
-            # update weights based on difference (delta), previous weight, learning rate, and eligibility trace
-            self.weights[feature] = self.weights[feature] + self.alpha * delta * self.eligibility[feature]
-            # if the nextAction is the best action (not chosen randomly),
-            # decay the eligibility trace accordingly for the next lookahead step
-            if nextAction == astar:
-                self.eligibility[feature] = self.gamma * self.lambd * self.eligibility[feature]
-            # else if random exploration action was chosen, restart lookahead
-            else:
-                self.eligibility[feature] = 0
+        for key in feature_keys:
+            # update eligibility trace by 1 for current combination of features
+            # self.eligibility is a 2-dim dict
+            self.eligibility[key][features[key]] = self.eligibility[key][features[key]] + 1
+        # for all features already explored
+        for key, possible_values in self.eligibility.iteritems():
+            for feat_val_key, e in possible_values.iteritems():
+                # update weights based on difference (delta), previous weight, learning rate, and eligibility trace
+                self.weights[key] = self.weights[key] + self.alpha * delta * e
+                # if the nextAction is the best action (not chosen randomly),
+                # decay the eligibility trace accordingly for the next lookahead step
+                if nextAction == astar:
+                    self.eligibility[key][feat_val_key] = self.gamma * self.lambd * e
+                # else if random exploration action was chosen, restart lookahead
+                else:
+                    self.eligibility[key][feat_val_key] = 0
 
         # update numTraining
         self.numTraining -= 1

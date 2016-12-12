@@ -60,7 +60,7 @@ parser.add_argument('--gamma', default=0.99, required=False, type=float, help='d
 parser.add_argument('--alpha', default=0.02, required=False, type=float, help='learning rate')
 parser.add_argument('--numtrain', default=10000, required=False, type=int, help='number of training episodes')
 
-parser.add_argument('--lambd', default=0.9, required=False, type=int, help='decay rate of eligibility traces')
+parser.add_argument('--lambd', default=0.9, required=False, type=float, help='decay rate of eligibility traces')
 parser.add_argument('--version', default=1, required=False, type=int, help='1 for QLearner; 2 for QLearnerPlus; 3 for QLearnerPlusLambda')
 
 args = parser.parse_args()
