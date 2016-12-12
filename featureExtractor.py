@@ -3,6 +3,7 @@
 import numpy as np
 np.set_printoptions(threshold=np.nan)
 
+# constants for screen pixel configurations
 BOTTOM_BLOCK_ROW = 93
 TOP_PADDLE_ROW = 189
 SCREEN_L = 8
@@ -10,7 +11,10 @@ SCREEN_R = 152
 MIDDLE_X = (SCREEN_L+SCREEN_R)/2
 MIDDLE_Y = (BOTTOM_BLOCK_ROW+TOP_PADDLE_ROW)/2
 
-def getFeatures(state, action): ## didn't use the action at all here
+def getFeatures(state, action):
+    """
+    Returns features for ball's x position, ball's y position, and paddle's x position.
+    """
     features = dict()
     ## get possible paddle positions (get from pixel image by color and location)
     paddle_xpos = state[TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0]
@@ -41,9 +45,14 @@ def getFeatures(state, action): ## didn't use the action at all here
 
     return features
 
+
 def getFeaturesPlus(state, prev_state, action):
+    """
+    Returns features from getFeatures as well as the predicted landing position
+    of the ball and the relative position of the ball to the paddle.
+    """
     features = getFeatures(state, action)
-    # add exactly where the ball will land
+    # added feature: exactly where the ball will land
     ball_prev_xpos = np.sum(state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0], axis=0)
     feature_ballx_prev = next((i for i, x in enumerate(ball_prev_xpos) if x), MIDDLE_X)
     ball_prev_ypos = state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, feature_ballx_prev, 0]

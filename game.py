@@ -1,7 +1,7 @@
 ### Frances Ding, Lily Zhang, Kimberley Yu
 
 # to run:
-# python game.py --version 3 --epsilon 0.1 --gamma 0.9 --alpha 0.05 --numtrain 1000
+# ex. python game.py --version 3 --epsilon 0.1 --gamma 0.9 --alpha 0.05 --numtrain 1000
 # all arguments are optional
 # order of arguments doesn't matter
 # use --version to choose between version 1, 2, and 3.
@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 import argparse
 import time
 
+# constants for screen pixel configurations
 BOTTOM_BLOCK_ROW = 93
 TOP_PADDLE_ROW = 189
 SCREEN_L = 8
@@ -52,7 +53,7 @@ def ballHit(state):
         return True
     return False
 
-## input command-line arguments
+## input arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('--epsilon', dest='epsilon', default=0.05, required=False, type=float, help='exploration rate for epsilon-greedy')
 parser.add_argument('--gamma', default=0.99, required=False, type=float, help='discount factor')
@@ -74,13 +75,13 @@ version = args.version
 # create the environment for Breakout
 env = gym.make('Breakout-v0')
 
-# for monitoring how we are doing
+# testing only: to monitor how we are doing
 # env.monitor.start('breakout-experiment-3')
 
 # get the legal actions as a list
 legalActions = range(env.action_space.n)
-# qplus is our agent which the additional features of where the ball will land relative to the paddle
-# qplus takes in the current and previous state to determine the best action
+
+# initiatlize corresponding agents for each version
 if version==1:
     agent = qlearningagent.QLearner(legalActions, epsilon=epsilon,gamma=gamma,alpha=alpha, numTraining=numTraining)
 elif version==2:
@@ -105,9 +106,13 @@ for i_episode in range(200):
     r = 0
     # reset the environment for the beginning of each game
     state = env.reset()
+
+    # extra initializations for more complext versions
     if version>1:
         prev_state = state
-        action = 0 #env.action_space[0] # initialize a as first action
+    if version==3:
+        action = 0 # initialize a first action
+
     # iterate through each timestep t in a game
     for t in range(10000):
         # render the environment at that timestep
@@ -125,7 +130,7 @@ for i_episode in range(200):
         # include a negative reward if the ball falls
         if ballFell(nextState):
             reward = -1
-        # include a positive reward if ball hit
+        # include a positive reward if ball hit by paddle
         if ballHit(nextState):
             reward += 1
 
@@ -140,6 +145,7 @@ for i_episode in range(200):
 
         # keep track of the weights over time
         weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
+
         # a check to prevent an error in the case of the weights blowing up
         # instead, we stop the game
         if abs(weights["ballx"]) > 10**305:
@@ -154,15 +160,19 @@ for i_episode in range(200):
             prev_state = state
             if version==3:
                 action = nextAction
+        # update state to next state
         state = nextState
-        # end if done
+
+        # end and print timesteps and reward if done
         if done:
             print("Episode finished after {} timesteps with {} reward".format(t+1, r))
             lengths.append(t+1)
             rewards.append(r)
             break
+
         # to slow down the game for testing purposes
         #time.sleep(0.1)
+
     # if we need to preemptively end the game because of the weights blowing up
     if end:
         break
@@ -184,4 +194,5 @@ ax2.plot(weights_over_time)
 fig.savefig('weights-v%s-e%s-g%s-a%s-n%s-l%s.png' % (version, epsilon, gamma, alpha, numTraining, lambd))
 print "Lengths: mean", np.mean(lengths), "std", np.std(lengths)
 print "Rewards: mean", np.mean(rewards), "std", np.std(rewards)
+
 # env.monitor.close()

@@ -1,13 +1,8 @@
 ### Frances Ding, Lily Zhang, Kimberley Yu
 
-# q learning with eligibility traces
-# http://webdocs.cs.ualberta.ca/~sutton/book/ebook/node78.html
-# http://stackoverflow.com/questions/40862578/how-to-understand-watkinss-q%CE%BB-learning-algorithm-in-suttonbartos-rl-book/40899753#40899753
-
 import featureExtractor, util
 import random
 import itertools
-
 
 # Basic Q learner with simple features:
 # x and y position of ball + x position of paddle
@@ -57,6 +52,7 @@ class QLearner:
         # Pick Action
         actions = self.legalActions
         action = None
+        # with probability self.epsilon, explore a random action
         if util.flipCoin(self.epsilon):
             return random.choice(actions)
         else:
@@ -87,6 +83,7 @@ class QLearner:
         # loop over features to update their weights
         for feature in feature_keys:
             self.weights[feature] = self.weights[feature] + self.alpha*difference*features[feature]
+        # update numTraining and stop exploring once you have trained the specified number of times
         self.numTraining -= 1
         if self.numTraining < 0:
             self.epsilon = 0
@@ -96,13 +93,12 @@ class QLearner:
 # Added features:
 # Predicted landing x position of ball + relative position of ball to paddle
 class QLearnerPlus(QLearner):
-
     def getQValue(self, state, prev_state, action):
         """
             Calculates and returns the Q-value for the (state, action) pair
             using the feature extractor. (Approximate Q-Learning).
         """
-        features = featureExtractor.getFeaturesPlus(state, prev_state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
+        features = featureExtractor.getFeaturesPlus(state, prev_state, action)
         feature_keys = features.keys()
         feature_keys.sort()
         q_sum = 0
@@ -131,6 +127,7 @@ class QLearnerPlus(QLearner):
         # Pick Action
         actions = self.legalActions
         action = None
+        # with probability self.epsilon, explore a random action
         if util.flipCoin(self.epsilon):
             return random.choice(actions)
         else:
@@ -167,17 +164,9 @@ class QLearnerPlus(QLearner):
         return self.weights
 
 # Inherits from QLearnerPlus class.
-# Includes eligibility traces
-# lambda parameter controls decay of eligibility trace
+# Includes eligibility traces as a means to propagate rewards through timesteps.
+# lambda parameter controls decay of eligibility trace.
 class QLearnerPlusLambda(QLearnerPlus):
-    # def __init__(self, lambd=0.9):
-    #     """
-    #         Initializes the QLearner with additional lambda parameter.
-    #     """
-    #     super(QLearnerPlusLambda, self).__init__()
-    #     self.lambd = lambd
-    #     self.eligibility = util.Counter()
-
     def __init__(self, legalActions, epsilon=0.05,gamma=0.99,alpha=0.2, numTraining=1000, lambd=0.9):
         """
             Initializes the QLearner.
@@ -226,6 +215,7 @@ class QLearnerPlusLambda(QLearnerPlus):
         # Pick Action
         actions = self.legalActions
         action = None
+        # with probability self.epsilon, explore a random action
         if util.flipCoin(self.epsilon):
             return random.choice(actions)
         else:
@@ -235,10 +225,13 @@ class QLearnerPlusLambda(QLearnerPlus):
     def update(self, state, prev_state, nextState, action, nextAction, reward):
         """
             Performs the Q-learning update function and returns the new weights
-            for all features.
+            for all features. Uses eligibility traces to do so.
         """
+        # Q(lambda) update function, as according to the Watkins algorithm
 
+        # store the best action from state to nextState
         astar = self.computeActionFromQValues(nextState, state)
+        # calculate the q-update difference
         delta = reward + self.gamma*self.getQValue(nextState, state, astar) - self.getQValue(state, prev_state, action)
 
         # extract features
@@ -246,22 +239,18 @@ class QLearnerPlusLambda(QLearnerPlus):
         feature_keys = features.keys()
         feature_keys.sort()
         for feature in feature_keys:
-            # have an eligibility trace for each feature?
+            # update eligibility trace for each feature
             self.eligibility[feature] = self.eligibility[feature] + 1
-
-        # for all features
-        ## wait lols don't think this is necessary
-        # features_space = itertools.product(range(8, 152)/32, range(93,189)/50, range(8, 152)/32, range(8, 152)/32)
-        # for feat_values in features_space:
-        #     feat_dict = dict(zip(feature_keys, feat_values))
-
-        for feature in feature_keys:
+            # update weights based on difference (delta), previous weight, learning rate, and eligibility trace
             self.weights[feature] = self.weights[feature] + self.alpha * delta * self.eligibility[feature]
+            # if the nextAction is the best action, then update the eligibility trace accordingly
             if nextAction == astar:
                 self.eligibility[feature] = self.gamma * self.lambd * self.eligibility[feature]
+            # else set it to zero (since it is not the best action with the greatest reward / Q-value)
             else:
                 self.eligibility[feature] = 0
 
+        # update numTraining
         self.numTraining -= 1
         if self.numTraining < 0:
             self.epsilon = 0
