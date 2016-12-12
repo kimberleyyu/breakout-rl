@@ -3,11 +3,15 @@
 First, set up the OpenAI gym code by following the instructions in their documentation: https://gym.openai.com/docs.
 
 Next, clone our repo at https://github.com/lhz1029/breakout-rl. You'll see several files, of which the following are important:
+
 1. game.py. This file sets up the game infrastructure and runs the other two files below.
+
 2. qlearningagent.py. This file contains our QLearner, QLearnerPlus, and QLearnerPlusLambda classes.
+
 3. featureExtractor.py. This file contains our getFeature and getFeaturePlus methods, to extract features from our RGB image states.
 
 Run our code: (python game.py) with the following optional arguments:
+
 	1. --version
     Input either 1, 2, or 3. Defaults to 1.
     Version 1 uses our QLearner class with only the basic features of the ball's x and y positions and the paddle's x position. Version 2 uses QLearnerPlus with the added features of predicted trajectory and relative position of ball to paddle. Version 3 uses the features of QLearnerPlus, but uses the Watkins Q(lambda) algorithm.
@@ -30,6 +34,7 @@ As it runs, the file will output the number of timesteps and rewards for each ep
 Episode finished after 218 timesteps with 1.0 reward
 
 At the end, our code will output 3 graphs:
+
 	1. Number of time steps per episode vs. Episode number
     This shows how the length of each episode changes with further training. The file will be named similar to "lengths-v1-e0.05-g0.99-a0.02-n10000-l0.9.png", where each numerical value corresponds to the given arguments (where v=version, e=epsilon, g=gamma, a=alpha, n=numtrain, and l=lambda).
   2. Rewards received vs. Episode number
