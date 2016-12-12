@@ -1,6 +1,7 @@
 ### Frances Ding, Lily Zhang, Kimberley Yu
 
 import numpy as np
+np.set_printoptions(threshold=np.nan)
 
 BOTTOM_BLOCK_ROW = 93
 TOP_PADDLE_ROW = 189
@@ -16,22 +17,22 @@ def getFeatures(state, action): ## didn't use the action at all here
     # find the first non-zero value in the list (i.e. the first non-black pixel in that row)
     # that is the leftmost position of the paddle
     # else, give the paddle the position of the middle of the screen
-    features["paddlex"] = next((i for i, x in enumerate(paddle_xpos) if x), MIDDLE_X)
+    features["paddlex"] = next((i for i, x in enumerate(paddle_xpos) if x != 0), MIDDLE_X)
     
     ## get possible ball x positions between the bottom block row and top paddle row
     ball_xpos = np.sum(state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0], axis=0)
     # find the first non-zero value in the list (i.e. the first non-black pixel in that row)
     # that is the leftmost position of the ball
     # else, give the ball the position of the middle of the screen in the x-direction
-    features["ballx"] = next((i for i, x in enumerate(ball_xpos) if x), MIDDLE_X)
+    features["ballx"] = next((i for i, x in enumerate(ball_xpos) if x != 0), MIDDLE_X)
 
     ## get the possible y positions of the ball given where we know the x position to be
-    ball_ypos = state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, features["ballx"], 0]
+    ball_ypos = np.sum(state[BOTTOM_BLOCK_ROW:TOP_PADDLE_ROW, SCREEN_L:SCREEN_R, 0], axis=1)
     # find the first non-zero value in the list (i.e. the first non-black pixel in that row)
     # that is the topmost position of the ball
     # else, give the ball the position of the middle of the screen in the y-direction
-    features["bally"] = next((i for i, x in enumerate(ball_ypos) if x), MIDDLE_Y)
-
+    features["bally"] = next((i for i, x in enumerate(ball_ypos) if x != 0), MIDDLE_Y)
+    
     # discretize the feature space
     # tested for various discretizations
     features["paddlex"] = features["paddlex"]/32
