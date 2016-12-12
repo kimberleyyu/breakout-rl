@@ -93,10 +93,12 @@ for i_episode in range(200):
         # update the weights
         if qplus:
             weights = agent.update(state, prev_state, action, nextState, reward)
+            # keep track of the weights over time
+            weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally'], weights['directionDown'], weights['landing']])
         else:
             weights = agent.update(state, action, nextState, reward)
-        # keep track of the weights over time
-        weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
+            # keep track of the weights over time
+            weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
         # a check to prevent an error in the case of the weights blowing up
         # instead, we stop the game 
         if abs(weights["ballx"]) > 10**305:
@@ -118,7 +120,6 @@ for i_episode in range(200):
             lengths.append(t+1)
             rewards.append(r)
             break
-        time.sleep(1)
     # if we need to preemptively end the game because of the weights blowing up
     if end:
         break
@@ -127,17 +128,17 @@ for i_episode in range(200):
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.plot(lengths)
-fig.savefig('lengthslonglanding.png')
+fig.savefig('lengthsqlearnerplus.png')
 
 fig = plt.figure()
 ax1 = fig.add_subplot(111)
 ax1.plot(rewards)
-fig.savefig('rewardslonglanding.png')
+fig.savefig('rewardsqlearnerpluspng')
 
 fig = plt.figure()
 ax2 = fig.add_subplot(111)
 ax2.plot(weights_over_time)
-fig.savefig('weightslonglanding.png')
+fig.savefig('weightsqlearnerplus.png')
 print "Lengths: mean", np.mean(lengths), "std", np.std(lengths)
 print "Rewards: mean", np.mean(rewards), "std", np.std(rewards)
 # env.monitor.close()
