@@ -97,16 +97,20 @@ for i_episode in range(200):
             weights = agent.update(state, action, nextState, reward)
         # keep track of the weights over time
         weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
-        
+        # a check to prevent an error in the case of the weights blowing up
+        # instead, we stop the game 
         if abs(weights["ballx"]) > 10**305:
             print("Episode finished after {} timesteps with {} reward".format(t+1, r))
             lengths.append(t+1)
             rewards.append(r)
             end = True
             break
+        # if qplus, update the state and prev_state
         if qplus:
-            nextState = state
             prev_state = state
+            state = nextState
+        # else, just update the state
+        else:
             state = nextState
         # end if done
         if done:
@@ -115,8 +119,11 @@ for i_episode in range(200):
             rewards.append(r)
             break
         time.sleep(1)
+    # if we need to preemptively end the game because of the weights blowing up
     if end:
         break
+
+# plot the lengths of the episodes, the total rewards, and the weights over time
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.plot(lengths)
