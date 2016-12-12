@@ -33,7 +33,9 @@ python game.py --version 3 --epsilon 0.9 --numtrain 100000 --lambd 0.8
 ```
 
 As it runs, the file will output the number of timesteps and rewards for each episode. An example line of output is:
+```
 Episode finished after 218 timesteps with 1.0 reward
+```
 
 At the end, our code will output 3 graphs:
 
