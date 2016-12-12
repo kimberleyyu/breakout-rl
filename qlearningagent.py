@@ -23,7 +23,7 @@ class QLearner:
             Calculates and returns the Q-value for the (state, action) pair
             using the feature extractor. (Approximate Q-Learning).
         """
-        features = featureExtractor.getFeatures(state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
+        features = featureExtractor.getFeatures(state, action)
         feature_keys = features.keys()
         feature_keys.sort()
         q_sum = 0
@@ -65,7 +65,7 @@ class QLearner:
             for all features.
         """
         # extract features
-        features = featureExtractor.getFeatures(state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
+        features = featureExtractor.getFeatures(state, action)
         feature_keys = features.keys()
         feature_keys.sort()
         # first we find the max Q-value over possible actions
@@ -140,7 +140,7 @@ class QLearnerPlus(QLearner):
             for all features.
         """
         # extract features
-        features = featureExtractor.getFeaturesPlus(state, prev_state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
+        features = featureExtractor.getFeaturesPlus(state, prev_state, action)
         feature_keys = features.keys()
         feature_keys.sort()
         # first we find the max Q-value over possible actions
@@ -186,7 +186,7 @@ class QLearnerPlusLambda(QLearnerPlus):
             Calculates and returns the Q-value for the (state, action) pair
             using the feature extractor. (Approximate Q-Learning).
         """
-        features = featureExtractor.getFeaturesPlus(state, prev_state, action) # THIS DEPENDS ON FEATURE EXTRACTOR
+        features = featureExtractor.getFeaturesPlus(state, prev_state, action)
         feature_keys = features.keys()
         feature_keys.sort()
         q_sum = 0
@@ -235,7 +235,7 @@ class QLearnerPlusLambda(QLearnerPlus):
         delta = reward + self.gamma*self.getQValue(nextState, state, astar) - self.getQValue(state, prev_state, action)
 
         # extract features
-        features = featureExtractor.getFeaturesPlus(state, prev_state, action) #THIS DEPENDS ON FEATURE EXTRACTOR INTERFACE
+        features = featureExtractor.getFeaturesPlus(state, prev_state, action)
         feature_keys = features.keys()
         feature_keys.sort()
         for feature in feature_keys:
