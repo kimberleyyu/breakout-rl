@@ -47,9 +47,9 @@ def ballHit(state):
     bally = next((i for i, x in enumerate(ball_ypos) if x != 0), MIDDLE_Y) + BOTTOM_BLOCK_ROW
 
     ##reward if exact hit: ballx matches paddlex and bally matches paddle y
-    #if ballx - paddlex < PADDLE_LEN and ballx - paddlex > 0 and abs(bally - TOP_PADDLE_ROW) < 10 :
+    if ballx - paddlex < PADDLE_LEN and ballx - paddlex > 0 and abs(bally - TOP_PADDLE_ROW) < 10 :
     ## alternatively, reward if ball really close to hitting paddle
-    if abs(ballx - paddlex) < 20 and abs(bally - TOP_PADDLE_ROW) < 15 :
+    #if abs(ballx - paddlex) < 20 and abs(bally - TOP_PADDLE_ROW) < 15 :
         return True
     return False
 
@@ -192,6 +192,11 @@ fig = plt.figure()
 ax2 = fig.add_subplot(111)
 ax2.plot(weights_over_time)
 fig.savefig('weights-v%s-e%s-g%s-a%s-n%s-l%s.png' % (version, epsilon, gamma, alpha, numTraining, lambd))
+
+# in case I need all lengths for significance test / t-test purposes
+print "All lengths recorded: ", lengths
+print "All rewards recorded: ", rewards
+
 print "Lengths: mean", np.mean(lengths), "std", np.std(lengths)
 print "Rewards: mean", np.mean(rewards), "std", np.std(rewards)
 
