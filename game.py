@@ -134,17 +134,18 @@ for i_episode in range(200):
         if ballHit(nextState):
             reward += 1
 
-        # update the weights
+        # update the weights and keep track of the weights over time
+
         if version==1:
             weights = agent.update(state, action, nextState, reward)
+            weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
         elif version==2:
             weights = agent.update(state, prev_state, action, nextState, reward)
+            weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally'], weights['directionDown'], weights['landing']])
         elif version==3:
             nextAction = agent.getAction(nextState, state)
             weights = agent.update(state, prev_state, nextState, action, nextAction, reward)
-
-        # keep track of the weights over time
-        weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally'], weights['directionDown'], weights['landing']])
+            weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally'], weights['directionDown'], weights['landing']])
 
         # a check to prevent an error in the case of the weights blowing up
         # instead, we stop the game
@@ -169,10 +170,6 @@ for i_episode in range(200):
             lengths.append(t+1)
             rewards.append(r)
             break
-
-        # to slow down the game for testing purposes
-        #time.sleep(0.1)
-
     # if we need to preemptively end the game because of the weights blowing up
     if end:
         break
