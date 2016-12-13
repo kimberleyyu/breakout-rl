@@ -144,7 +144,7 @@ for i_episode in range(200):
             weights = agent.update(state, prev_state, nextState, action, nextAction, reward)
 
         # keep track of the weights over time
-        weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally']])
+        weights_over_time.append([weights['paddlex'],weights['ballx'], weights['bally'], weights['directionDown'], weights['landing']])
 
         # a check to prevent an error in the case of the weights blowing up
         # instead, we stop the game
